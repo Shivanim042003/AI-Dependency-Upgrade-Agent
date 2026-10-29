@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pmigrate · Pydantic v1→v2 migration agent</title>
+<style>
+  :root{
+    --bg:#f6f5f1; --panel:#ffffff; --ink:#1c1b19; --muted:#6b675f; --line:#e3e0d8;
+    --accent:#1f6f5c; --accent-ink:#ffffff; --ok:#1f7a4d; --bad:#b3352b; --warn:#9a6a00;
+    --add-bg:#e6f4ea; --del-bg:#fbe9e7; --code:#f1efe8;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#141412; --panel:#1d1d1a; --ink:#ecebe6; --muted:#9b978c; --line:#33322d;
+      --accent:#4cc3a3; --accent-ink:#0b1f19; --ok:#5fd08f; --bad:#ff7a6e; --warn:#e0b34a;
+      --add-bg:#12301f; --del-bg:#3a1c19; --code:#25241f; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  header{padding:28px 20px 8px;max-width:1100px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 4px;letter-spacing:-.01em}
+  .sub{color:var(--muted);margin:0}
+  main{max-width:1100px;margin:0 auto;padding:12px 20px 60px;display:grid;gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .controls{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end}
+  @media(max-width:700px){.controls{grid-template-columns:1fr}}
+  label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+  select,button{font:inherit;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);width:100%}
+  button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600;cursor:pointer}
+  button.primary:disabled{opacity:.5;cursor:not-allowed}
+  .banner{font-size:13px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+  .pill{display:inline-block;padding:1px 8px;border-radius:99px;font-size:12px;border:1px solid var(--line);color:var(--muted)}
+  .pill.ok{color:var(--ok);border-color:var(--ok)} .pill.bad{color:var(--bad);border-color:var(--bad)} .pill.warn{color:var(--warn);border-color:var(--warn)}
+  #timeline{display:grid;gap:6px;max-height:420px;overflow:auto}
+  .ev{display:grid;grid-template-columns:90px 1fr;gap:10px;font-size:13px;padding:6px 8px;border-radius:8px;background:var(--code)}
+  .ev .k{color:var(--muted);font-family:var(--mono);font-size:12px}
+  .ev .v{overflow-wrap:anywhere}
+  .ev details summary{cursor:pointer;color:var(--muted)}
+  .ev pre{margin:6px 0 0;white-space:pre-wrap;font:12px/1.4 var(--mono)}
+  .bar{height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:4px}
+  .bar>i{display:block;height:100%;background:var(--accent)}
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:-4px 0 12px;flex-wrap:wrap}
+  .tab{padding:8px 12px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;font-size:14px}
+  .tab.active{color:var(--ink);border-color:var(--accent)}
+  .diff{font:12px/1.45 var(--mono);overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:8px}
+  .diff div{padding:0 10px;white-space:pre}
+  .diff .add{background:var(--add-bg)} .diff .del{background:var(--del-bg)} .diff .hunk{color:var(--muted)} .diff .file{font-weight:700;padding-top:8px}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left} th{color:var(--muted);font-weight:600}
+  .stat{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:10px}
+  .stat b{display:block;font-size:20px} .stat span{color:var(--muted);font-size:12px}
+  .doc{border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px}
+  .doc a{color:var(--accent)} .doc pre{white-space:pre-wrap;font:12px/1.4 var(--mono);margin:6px 0 0;color:var(--muted)}
+  .hidden{display:none}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <h1>pmigrate <span class="pill">Pydantic v1 → v2</span></h1>
+  <p class="sub">An evaluated migration agent. Pick a preconfigured repo, watch a bounded run, then inspect the diff and the independent verification.</p>
+</header>
+<main>
+  <section class="card">
+    <div class="controls">
+      <div><label for="task">Task</label><select id="task"></select></div>
+      <div><label for="variant">Variant</label><select id="variant"></select></div>
+      <div><button id="go" class="primary">Run migration</button></div>
+    </div>
+    <div class="banner" id="banner"></div>
+  </section>
+
+  <section class="card hidden" id="progress">
+    <div class="stat" id="stats"></div>
+    <div id="timeline"></div>
+  </section>
+
+  <section class="card hidden" id="outcome">
+    <div id="verdict" style="margin-bottom:12px"></div>
+    <div class="tabs" id="tabs"></div>
+    <div id="pane"></div>
+  </section>
+
+  <section class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <strong>Evaluation results</strong><button id="reload" style="width:auto">Refresh</button>
+    </div>
+    <div id="results" class="sub" style="margin-top:8px">Loading…</div>
+  </section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let result = null, tab = 'diff', requiredTotal = 0;
+
+async function boot(){
+  const [h, t] = await Promise.all([fetch('/api/health').then(r=>r.json()), fetch('/api/tasks').then(r=>r.json())]);
+  $('#task').innerHTML = t.tasks.map(x=>`<option value="${esc(x.id)}">${esc(x.id)} · pydantic ${esc(x.pydantic)} · py${esc(x.python)}</option>`).join('');
+  $('#variant').innerHTML = t.variants.map(v=>`<option>${esc(v)}</option>`).join('');
+  const sb = h.docker ? '<span class="pill ok">Docker sandbox</span>' : '<span class="pill warn">no Docker daemon</span>';
+  $('#banner').innerHTML = `${sb}<span class="pill">mode: ${esc(h.mode)}</span>` +
+    `<span class="pill">per-run cap $${h.per_run_budget.max_cost_usd} · ${h.per_run_budget.max_steps} steps</span>` +
+    `<span class="pill">24h spend $${h.spent_24h_usd} / $${h.daily_cap_usd}</span>`;
+  loadResults();
+}
+
+function addEvent(ev){
+  const tl = $('#timeline'); const d = document.createElement('div'); d.className = 'ev';
+  let k = ev.type, v = '';
+  if (ev.type==='start') v = `run started · backend <b>${esc(ev.backend)}</b>`;
+  else if (ev.type==='scan') v = `<details><summary>static scan of v1 usages</summary><pre>${esc(ev.inventory)}</pre></details>`;
+  else if (ev.type==='plan') v = `<details open><summary>plan</summary><pre>${esc(ev.text)}</pre></details>`;
+  else if (ev.type==='llm'){ k=`step ${ev.step}`; v = `${ev.text?esc(ev.text)+'<br>':''}<span class="pill">${esc((ev.tool_uses||[]).join(', ')||'text')}</span> <span class="pill">$${ev.cost_usd}</span>`; $('#s-cost').textContent='$'+ev.cost_usd; $('#s-steps').textContent=ev.step; }
+  else if (ev.type==='tool'){ k='tool'; v = `<b>${esc(ev.name)}</b> <span style="color:var(--muted)">${esc(JSON.stringify(ev.input)).slice(0,160)}</span>${ev.error?' <span class="pill bad">error</span>':''}<details><summary>output</summary><pre>${esc(ev.output)}</pre></details>`; }
+  else if (ev.type==='test_run'){ k='tests'; requiredTotal = ev.required_total; const pass = ev.required_total-ev.required_failing; v = `required passing <b>${pass}/${ev.required_total}</b>${ev.partial?' (partial run)':''}<div class="bar"><i style="width:${100*pass/Math.max(1,ev.required_total)}%"></i></div>`; $('#s-tests').textContent = `${pass}/${ev.required_total}`; }
+  else if (ev.type==='retrieval'){ k='docs'; v = `lookup “${esc(ev.query)}”<br>` + ev.hits.map(h=>`<a href="${esc(h.url)}" target="_blank" rel="noopener">${esc(h.heading)}</a>`).join('<br>'); }
+  else if (ev.type==='revert'){ k='revert'; v = `<span class="pill warn">tests got worse (${ev.from_failing} failing) → restored best state (${ev.to_failing})</span>`; }
+  else if (ev.type==='bump_pydantic'){ k='bump'; v = `<details><summary>bump-pydantic output</summary><pre>${esc(ev.output)}</pre></details>`; }
+  else if (ev.type==='verify_start'){ k='verify'; v = 'rebuilding a clean environment and re-running tests on the patch only…'; }
+  else if (ev.type==='verified'){ k='verified'; v = ev.success ? '<span class="pill ok">verified</span>' : `<span class="pill bad">${esc(ev.category||'failed')}</span>`; }
+  else if (ev.type==='error'){ k='error'; v = `<span class="pill bad">${esc(ev.message)}</span>`; }
+  else if (ev.type==='end'){ k='agent done'; v = `${esc(ev.reason)} · ${ev.steps} steps · ${ev.wall_s}s`; }
+  else v = esc(JSON.stringify(ev));
+  d.innerHTML = `<div class="k">${esc(k)}</div><div class="v">${v}</div>`; tl.appendChild(d); tl.scrollTop = tl.scrollHeight;
+}
+
+$('#go').onclick = async () => {
+  $('#go').disabled = true; $('#timeline').innerHTML=''; $('#outcome').classList.add('hidden'); $('#progress').classList.remove('hidden');
+  $('#stats').innerHTML = `<div><b id="s-tests">–</b><span>required tests passing</span></div><div><b id="s-steps">0</b><span>steps</span></div><div><b id="s-cost">$0</b><span>model cost</span></div>`;
+  const r = await fetch('/api/runs', {method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({task_id:$('#task').value, variant:$('#variant').value})});
+  if (!r.ok){ const e = await r.json().catch(()=>({detail:r.statusText})); addEvent({type:'error', message:e.detail}); $('#go').disabled=false; return; }
+  const {run_id} = await r.json();
+  const es = new EventSource(`/api/runs/${run_id}/events`);
+  es.onmessage = m => addEvent(JSON.parse(m.data));
+  es.addEventListener('end', async () => { es.close(); const j = await fetch(`/api/runs/${run_id}`).then(r=>r.json()); finish(j); $('#go').disabled=false; loadResults(); });
+  es.onerror = () => { /* browser retries; 'end' closes cleanly */ };
+};
+
+function finish(j){
+  if (j.error){ addEvent({type:'error', message:j.error}); return; }
+  result = j.result; $('#outcome').classList.remove('hidden');
+  const v = result.verification;
+  $('#verdict').innerHTML = (result.success ? '<span class="pill ok">VERIFIED</span>' : `<span class="pill bad">FAILED · ${esc(result.failure_category)}</span>`) +
+    ` <span class="pill">${result.steps} steps</span> <span class="pill">$${result.cost_usd}</span> <span class="pill">${result.agent_wall_s}s agent time</span>` +
+    (v.native_ok===false ? ' <span class="pill bad">not native v2</span>' : '') + (result.mode==='replay' ? ' <span class="pill warn">replayed transcript</span>' : '');
+  const tabs = ['diff','verification','docs','summary']; $('#tabs').innerHTML = tabs.map(t=>`<div class="tab" data-t="${t}">${t}</div>`).join('');
+  document.querySelectorAll('.tab').forEach(el=>el.onclick=()=>{tab=el.dataset.t; render();}); tab='diff'; render();
+}
+
+function render(){
+  document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active', el.dataset.t===tab));
+  const r = result, v = r.verification, p = $('#pane');
+  if (tab==='diff'){
+    if (!r.diff.trim()) { p.innerHTML = '<p class="sub">Empty patch.</p>'; return; }
+    p.innerHTML = '<div class="diff">' + r.diff.split('\n').map(l=>{
+      const c = l.startsWith('+++')||l.startsWith('---')?'hunk':l.startsWith('diff ')?'file':l.startsWith('@@')?'hunk':l.startsWith('+')?'add':l.startsWith('-')?'del':'';
+      return `<div class="${c}">${esc(l)||' '}</div>`; }).join('') + '</div>';
+  } else if (tab==='verification'){
+    const rows = [
+      ['Required tests', v.required_total], ['Still failing', (v.required_failing||[]).length], ['Regressions (passed before, fail now)', (v.regressions||[]).length],
+      ['Tests pass (clean env)', v.tests_pass], ['Native v2 (deprecations = errors)', v.native_ok], ['Policy clean', v.policy_ok], ['Network isolated during tests', v.network_isolated], ['Verification time', Math.round(v.duration_s)+'s']];
+    p.innerHTML = '<table>' + rows.map(([a,b])=>`<tr><th>${a}</th><td>${esc(b)}</td></tr>`).join('') + '</table>' +
+      (v.violations.length ? '<h4>Policy violations</h4><table>' + v.violations.map(x=>`<tr><td><b>${esc(x.code)}</b></td><td>${esc(x.file)}</td><td><code>${esc(x.detail)}</code></td></tr>`).join('') + '</table>' : '') +
+      ((v.required_failing||[]).length ? '<h4>Failing tests</h4><pre>' + esc(v.required_failing.join('\n')) + '</pre>' : '') +
+      (v.env_error ? '<h4>Environment error</h4><pre>'+esc(v.env_error)+'</pre>' : '') +
+      ((r.denied_edits||[]).length ? '<h4>Blocked edits to protected files</h4><pre>' + esc(r.denied_edits.join('\n')) + '</pre>' : '');
+  } else if (tab==='docs'){
+    p.innerHTML = (r.retrieved_docs.length ? r.retrieved_docs.map(d=>`<div class="doc"><b>${esc(d.heading)}</b> <span class="pill">${esc(d.source)} @ ${esc(d.tag)}</span> <a href="${esc(d.url)}" target="_blank" rel="noopener">source</a><div class="sub">query: ${esc(d.query)}</div><pre>${esc(d.text)}</pre></div>`).join('') : '<p class="sub">No documentation lookups in this run (variant without docs, or none needed).</p>');
+  } else {
+    p.innerHTML = (r.plan ? '<h4>Plan</h4><pre style="white-space:pre-wrap">'+esc(r.plan)+'</pre>' : '') + '<h4>Agent summary</h4><p>' + (esc(r.summary) || '<span class="sub">none</span>') + '</p>';
+  }
+}
+
+async function loadResults(){
+  const r = await fetch('/api/results').then(r=>r.json()).catch(()=>null); const el = $('#results');
+  if (!r || !Object.keys(r.summary||{}).length){ el.textContent = 'No evaluation runs logged yet. Run `pmigrate eval` then refresh.'; return; }
+  const rows = Object.entries(r.summary).sort(([a],[b])=>a.localeCompare(b)).map(([v,s])=>`<tr><td>${esc(v)}</td><td>${s.successes}/${s.attempts}</td><td>${(s.ci95[0]*100).toFixed(0)}–${(s.ci95[1]*100).toFixed(0)}%</td><td>$${s.cost_median.toFixed(3)}</td><td>${s.wall_median_s.toFixed(0)}s</td><td>${s.attempts_with_regression}</td></tr>`).join('');
+  el.innerHTML = `<table><tr><th>variant</th><th>verified</th><th>95% CI</th><th>median cost</th><th>median time</th><th>runs w/ regressions</th></tr>${rows}</table>` +
+    (r.warnings.length ? '<p class="pill warn">'+esc(r.warnings.join('; '))+'</p>' : '');
+}
+$('#reload').onclick = loadResults; boot();
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{
+  "summary": {
+    "bump-pydantic": {
+      "attempts": 2,
+      "tasks": 2,
+      "successes": 0,
+      "tasks_solved_at_least_once": 0,
+      "success_rate": 0.0,
+      "ci95": [
+        0.0,
+        0.6576280471103807
+      ],
+      "attempts_collection_failed": 2,
+      "regressions_total": 0,
+      "attempts_with_regression": 0,
+      "tokens_median": 0.0,
+      "cost_median": 0.0,
+      "cost_mean": 0.0,
+      "cost_p90": 0.0,
+      "cost_total": 0,
+      "cost_per_success": null,
+      "wall_median_s": 53.782015562057495,
+      "wall_p90_s": 74.52291655540466,
+      "steps_median": 0.0,
+      "test_runs_median": 0.0,
+      "failures": {
+        "incorrect_patch": 2
+      },
+      "models": []
+    },
+    "noop": {
+      "attempts": 2,
+      "tasks": 2,
+      "successes": 0,
+      "tasks_solved_at_least_once": 0,
+      "success_rate": 0.0,
+      "ci95": [
+        0.0,
+        0.6576280471103807
+      ],
+      "attempts_collection_failed": 0,
+      "regressions_total": 0,
+      "attempts_with_regression": 0,
+      "tokens_median": 0.0,
+      "cost_median": 0.0,
+      "cost_mean": 0.0,
+      "cost_p90": 0.0,
+      "cost_total": 0,
+      "cost_per_success": null,
+      "wall_median_s": 0.0,
+      "wall_p90_s": 0.0,
+      "steps_median": 0.0,
+      "test_runs_median": 0.0,
+      "failures": {
+        "gave_up": 2
+      },
+      "models": []
+    }
+  },
+  "warnings": [
+    "all runs used the local backend (not a security boundary; Docker path unvalidated)"
+  ]
+}

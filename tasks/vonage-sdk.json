@@ -1,0 +1,66 @@
+{
+  "base_sha": "c09833c7c5440d8a6f27abe02bbe5717327c97e6",
+  "deselect": [],
+  "exclusion_reason": null,
+  "extra_deps_after": [],
+  "extra_deps_before": [],
+  "id": "vonage-sdk",
+  "install_cmd": "-e .",
+  "notes": "[adaptation derived from reference test diff - review manually] [deprecated_call wrappers stripped from adaptation] [track=lenient: reference only partly native; deprecated_call wrappers stripped from adaptation; PROVISIONAL until adaptation audit reviewed]",
+  "policy": "lenient",
+  "provisional": true,
+  "pydantic_after": "2.10.0",
+  "pydantic_before": "1.10.13",
+  "python_version": "3.11",
+  "reference_sha": "0a8d217a178f989275e128c54acd3bb544a4b082",
+  "repo_url": "https://github.com/Vonage/vonage-python-sdk",
+  "split": "dev",
+  "states": {
+    "reference_pass": {
+      "counts": {
+        "error": 0,
+        "failed": 0,
+        "passed": 422,
+        "skipped": 0
+      },
+      "dropped_count": 0,
+      "dropped_tests": [],
+      "duration_s": 8.6,
+      "green_on_required": true,
+      "native_clean": false,
+      "required": 422
+    },
+    "v1_pass": {
+      "counts": {
+        "error": 0,
+        "failed": 0,
+        "passed": 422,
+        "skipped": 0
+      },
+      "duration_s": 8.6,
+      "green": true,
+      "network_isolated": true,
+      "stable": true
+    },
+    "v2_fail": {
+      "collection_error": false,
+      "counts": {
+        "error": 16,
+        "failed": 0,
+        "passed": 0,
+        "skipped": 0
+      },
+      "failing_required_normal": 422,
+      "failing_required_strict": 0
+    }
+  },
+  "status": "reproducible",
+  "test_adaptation_patch": "diff --git a/tests/test_ncco_builder/ncco_samples/ncco_builder_samples.py b/tests/test_ncco_builder/ncco_samples/ncco_builder_samples.py\nindex 85177fc..0cf4a33 100644\n--- a/tests/test_ncco_builder/ncco_samples/ncco_builder_samples.py\n+++ b/tests/test_ncco_builder/ncco_samples/ncco_builder_samples.py\n@@ -1,3 +1,4 @@\n+import pytest\n from vonage import Ncco, ConnectEndpoints, InputTypes, PayPrompts\n \n record = Ncco.Record(eventUrl='http://example.com/events')\n@@ -53,27 +54,32 @@ notify = Ncco.Notify(\n     payload={\"message\": \"world\"}, eventUrl=[\"http://example.com\"], eventMethod='PUT'\n )\n \n-pay_voice_prompt = Ncco.Pay(\n-    amount=99.99,\n-    currency='gbp',\n-    eventUrl='https://example.com/payment',\n-    voice=PayPrompts.VoicePrompt(language='en-GB', style=1),\n-)\n \n-pay_text_prompt = Ncco.Pay(\n-    amount=12.345,\n-    currency='gbp',\n-    eventUrl='https://example.com/payment',\n-    prompts=PayPrompts.TextPrompt(\n-        type='CardNumber',\n-        text='Enter your card number.',\n-        errors={\n-            'InvalidCardType': {\n-                'text': 'The card you are trying to use is not valid for this purchase.'\n-            }\n-        },\n-    ),\n-)\n+def get_pay_voice_prompt():\n+    return Ncco.Pay(\n+        amount=99.99,\n+        currency='gbp',\n+        eventUrl='https://example.com/payment',\n+        voice=PayPrompts.VoicePrompt(language='en-GB', style=1),\n+    )\n+\n+\n+def get_pay_text_prompt():\n+    return Ncco.Pay(\n+        amount=12.345,\n+        currency='gbp',\n+        eventUrl='https://example.com/payment',\n+        prompts=PayPrompts.TextPrompt(\n+            type='CardNumber',\n+            text='Enter your card number.',\n+            errors={\n+                'InvalidCardType': {\n+                    'text': 'The card you are trying to use is not valid for this purchase.'\n+                }\n+            },\n+        ),\n+    )\n+\n \n basic_ncco = [{\"action\": \"talk\", \"text\": \"hello\"}]\n \ndiff --git a/tests/test_ncco_builder/test_connect_endpoints.py b/tests/test_ncco_builder/test_connect_endpoints.py\nindex 44cc608..6fa378e 100644\n--- a/tests/test_ncco_builder/test_connect_endpoints.py\n+++ b/tests/test_ncco_builder/test_connect_endpoints.py\n@@ -7,7 +7,7 @@ from pydantic import ValidationError\n \n \n def _action_as_dict(action: Ncco.Action):\n-    return action.dict(exclude_none=True)\n+    return action.model_dump(exclude_none=True)\n \n \n def test_connect_all_endpoints_from_model():\ndiff --git a/tests/test_ncco_builder/test_input_types.py b/tests/test_ncco_builder/test_input_types.py\nindex 7572ae1..592e051 100644\n--- a/tests/test_ncco_builder/test_input_types.py\n+++ b/tests/test_ncco_builder/test_input_types.py\n@@ -4,14 +4,14 @@ from vonage import InputTypes\n def test_create_dtmf_model():\n     dtmf = InputTypes.Dtmf(timeOut=5, maxDigits=2, submitOnHash=True)\n     assert type(dtmf) == InputTypes.Dtmf\n-    assert dtmf.dict() == {'maxDigits': 2, 'submitOnHash': True, 'timeOut': 5}\n+    assert dtmf.model_dump() == {'maxDigits': 2, 'submitOnHash': True, 'timeOut': 5}\n \n \n def test_create_dtmf_model_from_dict():\n     dtmf_dict = {'timeOut': 3, 'maxDigits': 4, 'submitOnHash': True}\n     dtmf_model = InputTypes.create_dtmf_model(dtmf_dict)\n     assert type(dtmf_model) == InputTypes.Dtmf\n-    assert dtmf_model.dict() == {'maxDigits': 4, 'submitOnHash': True, 'timeOut': 3}\n+    assert dtmf_model.model_dump() == {'maxDigits': 4, 'submitOnHash': True, 'timeOut': 3}\n \n \n def test_create_speech_model():\n@@ -25,7 +25,7 @@ def test_create_speech_model():\n         saveAudio=True,\n     )\n     assert type(speech) == InputTypes.Speech\n-    assert speech.dict() == {\n+    assert speech.model_dump() == {\n         'uuid': 'my-uuid',\n         'endOnSilence': 2.5,\n         'language': 'en-GB',\n@@ -40,7 +40,7 @@ def test_create_speech_model_from_dict():\n     speech_dict = {'uuid': 'my-uuid', 'endOnSilence': 2.5, 'maxDuration': 30}\n     speech_model = InputTypes.create_speech_model(speech_dict)\n     assert type(speech_model) == InputTypes.Speech\n-    assert speech_model.dict(exclude_none=True) == {\n+    assert speech_model.model_dump(exclude_none=True) == {\n         'uuid': 'my-uuid',\n         'endOnSilence': 2.5,\n         'maxDuration': 30,\ndiff --git a/tests/test_ncco_builder/test_ncco_actions.py b/tests/test_ncco_builder/test_ncco_actions.py\nindex b7bd028..36c4aa7 100644\n--- a/tests/test_ncco_builder/test_ncco_actions.py\n+++ b/tests/test_ncco_builder/test_ncco_actions.py\n@@ -7,7 +7,7 @@ from pydantic import ValidationError\n \n \n def _action_as_dict(action: Ncco.Action):\n-    return action.dict(exclude_none=True)\n+    return action.model_dump(exclude_none=True, by_alias=True)\n \n \n def test_record_full():\ndiff --git a/tests/test_ncco_builder/test_ncco_builder.py b/tests/test_ncco_builder/test_ncco_builder.py\nindex fbabd42..f3850b5 100644\n--- a/tests/test_ncco_builder/test_ncco_builder.py\n+++ b/tests/test_ncco_builder/test_ncco_builder.py\n@@ -33,8 +33,8 @@ def test_build_insane_ncco():\n         nbs.stream,\n         nbs.input,\n         nbs.notify,\n-        nbs.pay_voice_prompt,\n-        nbs.pay_text_prompt,\n+        nbs.get_pay_voice_prompt(),\n+        nbs.get_pay_text_prompt(),\n     ]\n     ncco = Ncco.build_ncco(actions=action_list)\n     assert ncco == nbs.insane_ncco\ndiff --git a/tests/test_verify2.py b/tests/test_verify2.py\nindex 5a586b2..601a78e 100644\n--- a/tests/test_verify2.py\n+++ b/tests/test_verify2.py\n@@ -101,7 +101,7 @@ def test_new_request_sms_custom_code_length_error():\n \n     with raises(ValidationError) as err:\n         verify2.new_request(params)\n-    assert 'ensure this value has at least 4 characters' in str(err.value)\n+    assert 'String should have at least 4 characters' in str(err.value)\n \n \n def test_new_request_sms_custom_code_character_error():\n@@ -141,7 +141,7 @@ def test_new_request_code_length_error():\n \n     with raises(ValidationError) as err:\n         verify2.new_request(params)\n-    assert 'ensure this value is less than or equal to 10' in str(err.value)\n+    assert 'Input should be less than or equal to 10' in str(err.value)\n \n \n def test_new_request_to_error():\ndiff --git a/tests/test_voice.py b/tests/test_voice.py\nindex 22f26aa..cc6dda5 100644\n--- a/tests/test_voice.py\n+++ b/tests/test_voice.py\n@@ -159,7 +159,6 @@ def test_user_provided_authorization(dummy_data):\n     token = request_authorization().split()[1]\n \n     token = jwt.decode(token, dummy_data.public_key, algorithms=\"RS256\")\n-    print(token)\n     assert token[\"application_id\"] == application_id\n     assert token[\"nbf\"] == nbf\n     assert token[\"exp\"] == exp\n",
+  "test_cmd": "pytest -q tests",
+  "test_deps": [
+    "pytest==7.4.2",
+    "responses==0.22.0",
+    "cryptography"
+  ],
+  "test_timeout_s": 300
+}

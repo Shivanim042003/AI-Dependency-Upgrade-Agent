@@ -1,0 +1,96 @@
+{
+  "summary": {
+    "noop": {
+      "attempts": 7,
+      "tasks": 3,
+      "successes": 0,
+      "tasks_solved_at_least_once": 0,
+      "success_rate": 0.0,
+      "ci95": [
+        0.0,
+        0.35433884297520657
+      ],
+      "attempts_collection_failed": 0,
+      "regressions_total": 0,
+      "attempts_with_regression": 0,
+      "tokens_median": 0,
+      "cost_median": 0,
+      "cost_mean": 0.0,
+      "cost_p90": 0.0,
+      "cost_total": 0,
+      "cost_per_success": null,
+      "wall_median_s": 0,
+      "wall_p90_s": 0.0,
+      "steps_median": 0,
+      "test_runs_median": 0,
+      "failures": {
+        "gave_up": 7
+      },
+      "models": []
+    },
+    "bump-pydantic": {
+      "attempts": 7,
+      "tasks": 3,
+      "successes": 0,
+      "tasks_solved_at_least_once": 0,
+      "success_rate": 0.0,
+      "ci95": [
+        0.0,
+        0.35433884297520657
+      ],
+      "attempts_collection_failed": 5,
+      "regressions_total": 0,
+      "attempts_with_regression": 0,
+      "tokens_median": 0,
+      "cost_median": 0,
+      "cost_mean": 0.0,
+      "cost_p90": 0.0,
+      "cost_total": 0,
+      "cost_per_success": null,
+      "wall_median_s": 27.855889320373535,
+      "wall_p90_s": 75.4935079574585,
+      "steps_median": 0,
+      "test_runs_median": 0,
+      "failures": {
+        "incorrect_patch": 7
+      },
+      "models": []
+    },
+    "agent": {
+      "attempts": 4,
+      "tasks": 3,
+      "successes": 1,
+      "tasks_solved_at_least_once": 1,
+      "success_rate": 0.25,
+      "ci95": [
+        0.045586062644636216,
+        0.6993639475573634
+      ],
+      "attempts_collection_failed": 2,
+      "regressions_total": 0,
+      "attempts_with_regression": 0,
+      "tokens_median": 637205.0,
+      "cost_median": 0.0,
+      "cost_mean": 0.0,
+      "cost_p90": 0.0,
+      "cost_total": 0,
+      "cost_per_success": 0.0,
+      "wall_median_s": 475.17704153060913,
+      "wall_p90_s": 689.0013967990875,
+      "steps_median": 62.5,
+      "test_runs_median": 2.5,
+      "failures": {
+        "budget_exhausted": 2,
+        "incorrect_patch": 1
+      },
+      "models": [
+        "openai/gpt-oss-120b"
+      ]
+    }
+  },
+  "warnings": [
+    "9 infrastructure-error runs (category `environment`) were excluded from all rates",
+    "multiple code versions contributed to these runs (agent code changed mid-experiment)",
+    "all runs used the local backend (not a security boundary; Docker path unvalidated)"
+  ]
+}

@@ -1,0 +1,10 @@
+.cache/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+results/*.sqlite
+tasks/toy-users*.json
+
+.venv/
+*.pyc
+.env

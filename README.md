@@ -195,3 +195,35 @@ Limits: one task and one model; 3 attempts per variant, so the intervals are wid
 ### Step-budget check (agent, same task and model)
 
 Rerun of `agent` with `--max-steps 80` (3 attempts, Docker): 2/3 verified, versus 1/3 at 40 steps. One run still hit the cap. The passing runs used about 79 steps, so the agent tends to use the whole budget; with 3 attempts per setting this does not show that the budget explains the earlier failures. The combined `agent` row in the generated report mixes both budgets and should not be quoted.
+
+## Reproduce
+
+Requirements: Python 3.11+, [uv](https://github.com/astral-sh/uv), git, and Docker (only for `--backend docker`).
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+pytest -q -m "not integration"          # unit tests, no network or model needed
+pmigrate check-env
+```
+
+**Baselines (no model, no cost).** Task definitions live in `tasks/`:
+
+```bash
+pmigrate eval repro-baselines --variants noop bump-pydantic --tasks llm-pydantic-v2 --attempts 1 --backend docker
+pmigrate report
+```
+
+**Agent runs (needs a model).** Any OpenAI-compatible endpoint works; the key is read from the environment and is never stored in the repo:
+
+```bash
+read -s -p "API key: " PMIGRATE_API_KEY; export PMIGRATE_API_KEY; echo
+export PMIGRATE_PROVIDER=openai PMIGRATE_BASE_URL=https://openrouter.ai/api/v1
+export PMIGRATE_MODEL=deepseek/deepseek-v3.2 PMIGRATE_MAX_TOKENS=2048
+pmigrate fetch-docs                      # once, for the agent+docs variant
+pmigrate eval repro-agent --variants agent agent+docs --tasks llm-pydantic-v2 \
+  --attempts 3 --workers 1 --backend docker --max-steps 40 --max-total-cost 1.5
+pmigrate report --model deepseek
+```
+
+Results are written to `results/runs.sqlite`. The tables above come from `results/report-deepseek-cmp2.md` (40 steps) and `results/report-deepseek-cmp3.md` (80 steps); do not quote the combined `agent` row in a report that mixes budgets. Model output is not deterministic, so counts will vary between runs.

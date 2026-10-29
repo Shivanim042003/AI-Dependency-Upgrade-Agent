@@ -67,6 +67,8 @@ class Verification:
     network_isolated: Optional[bool] = None
     test_counts: dict = field(default_factory=dict)
     touches_dep_files: bool = False
+    strict_failing: int = 0           # required tests that fail in the strict (deprecation-as-error) run
+    strict_sample: list = field(default_factory=list)   # [{test, message}] first few, as evidence for native_ok=False
 
     def to_json(self) -> dict:
         d = asdict(self)
@@ -94,6 +96,9 @@ def evaluate_run(task: TaskSpec, base: Baseline, normal: TestRun, strict: Option
             v.native_ok = False
         else:
             v.native_ok = bool(req) and not (req - strict.passed) and not strict.timed_out
+            bad = sorted(req - strict.passed)
+            v.strict_failing = len(bad)
+            v.strict_sample = [{"test": b, "message": (strict.messages.get(b) or "")[:300]} for b in bad[:5]]
     return v
 
 

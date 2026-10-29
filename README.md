@@ -191,3 +191,7 @@ fixture; the agent runs reported above used the local backend, which is not a se
 | agent+docs | 3/3 | 44%-100% |
 
 Limits: one task and one model; 3 attempts per variant, so the intervals are wide and agent vs agent+docs is not statistically distinguishable (exact p = 0.4). Both `agent` failures hit the 40-step budget, so a larger step budget might change that gap. The harder tasks (openjd-model, vonage-sdk) are provisional and have no agent pass yet. Full report: `results/report-deepseek-cmp2.md`.
+
+### Step-budget check (agent, same task and model)
+
+Rerun of `agent` with `--max-steps 80` (3 attempts, Docker): 2/3 verified, versus 1/3 at 40 steps. One run still hit the cap. The passing runs used about 79 steps, so the agent tends to use the whole budget; with 3 attempts per setting this does not show that the budget explains the earlier failures. The combined `agent` row in the generated report mixes both budgets and should not be quoted.

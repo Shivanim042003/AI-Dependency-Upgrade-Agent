@@ -179,3 +179,15 @@ Docker backend validated: `python scripts/validate_backend.py --backend docker` 
 visible, network blocked during tests, no writes outside the run directory, host files unreadable, timeout kills the
 command, clean-room reference passes, empty and protected-file patches fail). The checks run on the synthetic
 fixture; the agent runs reported above used the local backend, which is not a security boundary.
+
+## Repeat runs (strict-native task, one model)
+
+`deepseek/deepseek-v3.2` on `llm-pydantic-v2` (280 required tests), 3 attempts per variant, Docker backend, 40-step budget:
+
+| Variant | Verified | 95% CI (Wilson) |
+|---|---|---|
+| bump-pydantic | 0/2 | 0%-66% |
+| agent | 1/3 | 6%-79% |
+| agent+docs | 3/3 | 44%-100% |
+
+Limits: one task and one model; 3 attempts per variant, so the intervals are wide and agent vs agent+docs is not statistically distinguishable (exact p = 0.4). Both `agent` failures hit the 40-step budget, so a larger step budget might change that gap. The harder tasks (openjd-model, vonage-sdk) are provisional and have no agent pass yet. Full report: `results/report-deepseek-cmp2.md`.

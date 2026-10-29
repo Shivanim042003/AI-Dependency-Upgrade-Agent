@@ -163,3 +163,10 @@ verified migration.
 - The strongest model tried, `deepseek-v3.2`, showed correct migration reasoning (for example, spotting that the v2
   regex engine rejects lookaheads) but hit the wall-clock budget on a slow provider.
 - Reproduce with `pmigrate report --model <name>`.
+
+## Sandbox validation
+
+Docker backend validated: `python scripts/validate_backend.py --backend docker` passes 13/13 checks (no credentials
+visible, network blocked during tests, no writes outside the run directory, host files unreadable, timeout kills the
+command, clean-room reference passes, empty and protected-file patches fail). The checks run on the synthetic
+fixture; the agent runs reported above used the local backend, which is not a security boundary.

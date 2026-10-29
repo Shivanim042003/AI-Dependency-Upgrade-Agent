@@ -57,40 +57,45 @@
       "models": []
     },
     "agent": {
-      "attempts": 4,
+      "attempts": 8,
       "tasks": 3,
       "successes": 1,
       "tasks_solved_at_least_once": 1,
-      "success_rate": 0.25,
+      "success_rate": 0.125,
       "ci95": [
-        0.045586062644636216,
-        0.6993639475573634
+        0.02241690886329618,
+        0.4708948057698615
       ],
-      "attempts_collection_failed": 2,
+      "attempts_collection_failed": 4,
       "regressions_total": 0,
       "attempts_with_regression": 0,
-      "tokens_median": 637205.0,
-      "cost_median": 0.0,
-      "cost_mean": 0.0,
-      "cost_p90": 0.0,
-      "cost_total": 0,
-      "cost_per_success": 0.0,
+      "tokens_median": 380865.5,
+      "cost_median": 0.0640047,
+      "cost_mean": 0.11222926,
+      "cost_p90": 0.309319421,
+      "cost_total": 0.89783408,
+      "cost_per_success": 0.89783408,
       "wall_median_s": 475.17704153060913,
-      "wall_p90_s": 689.0013967990875,
-      "steps_median": 62.5,
+      "wall_p90_s": 1226.327493691444,
+      "steps_median": 39.5,
       "test_runs_median": 2.5,
       "failures": {
-        "budget_exhausted": 2,
+        "gave_up": 1,
+        "budget_exhausted": 5,
         "incorrect_patch": 1
       },
       "models": [
-        "openai/gpt-oss-120b"
+        "deepseek/deepseek-v3.2",
+        "llama3.1",
+        "openai/gpt-oss-120b",
+        "qwen2.5:14b"
       ]
     }
   },
   "warnings": [
-    "9 infrastructure-error runs (category `environment`) were excluded from all rates",
+    "18 infrastructure-error runs (category `environment`) were excluded from all rates",
     "multiple code versions contributed to these runs (agent code changed mid-experiment)",
+    "multiple models in one report",
     "all runs used the local backend (not a security boundary; Docker path unvalidated)"
   ]
 }

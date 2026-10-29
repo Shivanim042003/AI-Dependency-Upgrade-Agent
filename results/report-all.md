@@ -14,7 +14,7 @@ Eligible tasks in these runs: **2** | excluded during preparation: **0** (of 3 c
 |---|---|---|---|---|---|---|---|---|---|
 | bump-pydantic | 0/3 (0%) | 0%-56% | 0 attempts (0 tests) | 2/3 | $0.000 | 0 | - | 73s | 0 |
 | noop | 0/3 (0%) | 0%-56% | 0 attempts (0 tests) | 0/3 | $0.000 | 0 | - | 0s | 0 |
-| agent | 0/1 (0%) | 0%-79% | 0 attempts (0 tests) | 1/1 | $0.000 | 560,268 | - | 341s | 45 |
+| agent | 0/1 (0%) | 0%-79% | 0 attempts (0 tests) | 1/1 | $0.091 | 560,268 | - | 341s | 45 |
 
 | Variant | environment | incorrect_patch | regression | budget_exhausted | policy_violation | gave_up |
 |---|---|---|---|---|---|---|
@@ -37,13 +37,13 @@ Paired per-task comparison:
 |---|---|---|---|---|---|---|---|---|---|
 | bump-pydantic | 0/3 (0%) | 0%-56% | 0 attempts (0 tests) | 2/3 | $0.000 | 0 | - | 22s | 0 |
 | noop | 0/3 (0%) | 0%-56% | 0 attempts (0 tests) | 0/3 | $0.000 | 0 | - | 0s | 0 |
-| agent | 0/1 (0%) | 0%-79% | 0 attempts (0 tests) | 1/1 | $0.000 | 2,005,567 | - | 723s | 82 |
+| agent | 0/2 (0%) | 0%-66% | 0 attempts (0 tests) | 2/2 | $0.310 | 1,515,667 | - | 1562s | 60 |
 
 | Variant | environment | incorrect_patch | regression | budget_exhausted | policy_violation | gave_up |
 |---|---|---|---|---|---|---|
 | bump-pydantic | 0 | 3 | 0 | 0 | 0 | 0 |
 | noop | 0 | 0 | 0 | 0 | 0 | 3 |
-| agent | 0 | 0 | 0 | 1 | 0 | 0 |
+| agent | 0 | 0 | 0 | 2 | 0 | 0 |
 
 Paired per-task comparison:
 
@@ -51,6 +51,8 @@ Paired per-task comparison:
 |---|---|---|---|---|---|---|---|
 | bump-pydantic | noop | 1 | 0 | 0 | 0 | 1 | 1.000 |
 | agent | bump-pydantic | 1 | 0 | 0 | 0 | 1 | 1.000 |
+
+Infrastructure errors excluded from the rates above (not agent results): agent: 3
 
 ## Track: synthetic_fixture (1 task: toy-users)
 
@@ -60,13 +62,13 @@ Paired per-task comparison:
 |---|---|---|---|---|---|---|---|---|---|
 | bump-pydantic | 0/1 (0%) | 0%-79% | 0 attempts (0 tests) | 1/1 | $0.000 | 0 | - | 2s | 0 |
 | noop | 0/1 (0%) | 0%-79% | 0 attempts (0 tests) | 0/1 | $0.000 | 0 | - | 0s | 0 |
-| agent | 1/2 (50%) | 9%-91% | 0 attempts (0 tests) | 0/2 | $0.000 | 457,802 | $0.000 | 471s | 60 |
+| agent | 1/5 (20%) | 4%-62% | 0 attempts (0 tests) | 1/5 | $0.033 | 84,353 | $0.187 | 333s | 25 |
 
 | Variant | environment | incorrect_patch | regression | budget_exhausted | policy_violation | gave_up |
 |---|---|---|---|---|---|---|
 | bump-pydantic | 0 | 1 | 0 | 0 | 0 | 0 |
 | noop | 0 | 0 | 0 | 0 | 0 | 1 |
-| agent | 0 | 0 | 0 | 1 | 0 | 0 |
+| agent | 0 | 0 | 0 | 3 | 0 | 1 |
 
 Paired per-task comparison:
 
@@ -75,12 +77,13 @@ Paired per-task comparison:
 | bump-pydantic | noop | 1 | 0 | 0 | 0 | 1 | 1.000 |
 | agent | bump-pydantic | 1 | 1 | 0 | 0 | 0 | 1.000 |
 
-Infrastructure errors excluded from the rates above (not agent results): agent: 9
+Infrastructure errors excluded from the rates above (not agent results): agent: 15
 
 *Cost = model API spend only (failed attempts included); compute excluded. Free/local models cost $0: use tokens. `configs/pricing.json` is a placeholder until verified. "Collection failed" means pytest aborted before running tests, so required tests were never executed (not observed assertion failures). With few tasks, report counts and traces, not just rates.*
 
 
 ## Warnings
-- 9 infrastructure-error runs (category `environment`) were excluded from all rates
+- 18 infrastructure-error runs (category `environment`) were excluded from all rates
 - multiple code versions contributed to these runs (agent code changed mid-experiment)
+- multiple models in one report
 - all runs used the local backend (not a security boundary; Docker path unvalidated)

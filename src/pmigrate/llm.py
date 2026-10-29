@@ -148,7 +148,12 @@ def response_from_openai(data: dict) -> LLMResponse:
             args = {}
         blocks.append({"type": "tool_use", "id": c.get("id") or f"call_{i}", "name": fn.get("name", ""), "input": args})
     u = data.get("usage") or {}
-    usage = Usage(input_tokens=u.get("prompt_tokens", 0) or 0, output_tokens=u.get("completion_tokens", 0) or 0)
+    prompt = u.get("prompt_tokens", 0) or 0
+    d = u.get("prompt_tokens_details") or {}
+    cached = min(prompt, (d.get("cached_tokens") or 0) if isinstance(d, dict) else 0)
+    # OpenAI-style `prompt_tokens` includes cached tokens; keep them separate so they are priced as cache reads
+    usage = Usage(input_tokens=prompt - cached, output_tokens=u.get("completion_tokens", 0) or 0,
+                  cache_read_tokens=cached)
     stop = "tool_use" if any(b["type"] == "tool_use" for b in blocks) else "end_turn"
     return LLMResponse(blocks, stop, usage)
 

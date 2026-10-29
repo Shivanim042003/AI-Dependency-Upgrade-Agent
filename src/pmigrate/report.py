@@ -133,6 +133,17 @@ TRACK_NOTES = {
 }
 
 
+def _reprice(rows: list) -> None:
+    """Runs logged before a model had a price stored $0. Recompute from the logged tokens when pricing.json now has
+    an explicit entry for that exact model (never the generic default)."""
+    from .config import cost_usd, load_pricing
+    prices = load_pricing()
+    for r in rows:
+        if not (r.get("cost_usd") or 0) and r.get("model") in prices:
+            r["cost_usd"] = cost_usd(r["model"], r.get("input_tokens") or 0, r.get("output_tokens") or 0,
+                                     r.get("cache_read_tokens") or 0, r.get("cache_write_tokens") or 0)
+
+
 def build_report(db: DB, experiment: Optional[str] = None, split: Optional[str] = None,
                  tasks_dir: Path = TASKS_DIR, baseline: str = "bump-pydantic",
                  model: Optional[str] = None) -> tuple[str, dict]:
@@ -141,6 +152,7 @@ def build_report(db: DB, experiment: Optional[str] = None, split: Optional[str] 
         rows = [r for r in rows if not r["variant"].startswith("agent") or model in (r.get("model") or "")]
     if not rows:
         return "No runs found.\n", {}
+    _reprice(rows)
     all_tasks = load_all(tasks_dir)
     task_track = {t.id: t.track for t in all_tasks}
     for r in rows:

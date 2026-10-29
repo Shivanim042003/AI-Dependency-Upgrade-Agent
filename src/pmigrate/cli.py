@@ -64,7 +64,7 @@ def cmd_prepare(a):
         t = TaskSpec(id=a.id, repo_url=a.repo, base_sha=a.base, reference_sha=a.ref,
                      python_version=a.python, pydantic_before=a.pydantic_before, pydantic_after=a.pydantic_after,
                      extra_deps_after=a.extra_after or [], extra_deps_before=a.extra_before or [],
-                     install_cmd=a.install, test_deps=a.test_deps or ["pytest"], test_cmd=a.test_cmd,
+                     install_cmd=a.install, exclude_newer=a.exclude_newer, test_deps=a.test_deps or ["pytest"], test_cmd=a.test_cmd,
                      policy=a.policy, split=a.split, notes=a.notes or "", deselect=a.deselect or [],
                      policy_exceptions=[dict(zip(("code", "contains", "rationale"), x.split("|", 2))) for x in a.exception],
                      provisional=a.provisional)
@@ -161,6 +161,7 @@ def main(argv=None):
     s.add_argument("--pydantic-before", default="1.10.13"); s.add_argument("--pydantic-after", default="2.10.0")
     s.add_argument("--extra-after", nargs="*"); s.add_argument("--extra-before", nargs="*")
     s.add_argument("--install", default="-e ."); s.add_argument("--test-deps", nargs="*")
+    s.add_argument("--exclude-newer", default="", help="resolve all dependencies as of this date (uv --exclude-newer), e.g. 2025-02-27")
     s.add_argument("--test-cmd", default="pytest -q"); s.add_argument("--policy", default="native_v2")
     s.add_argument("--split", default="dev"); s.add_argument("--notes")
     s.add_argument("--deselect", nargs="*", help="pytest node ids to exclude (environment artefacts)")

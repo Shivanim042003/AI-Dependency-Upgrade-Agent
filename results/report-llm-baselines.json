@@ -1,0 +1,61 @@
+{
+  "summary": {
+    "bump-pydantic": {
+      "attempts": 1,
+      "tasks": 1,
+      "successes": 0,
+      "tasks_solved_at_least_once": 0,
+      "success_rate": 0.0,
+      "ci95": [
+        0.0,
+        0.7934567085261071
+      ],
+      "attempts_collection_failed": 0,
+      "regressions_total": 0,
+      "attempts_with_regression": 0,
+      "tokens_median": 0,
+      "cost_median": 0,
+      "cost_mean": 0.0,
+      "cost_p90": 0.0,
+      "cost_total": 0,
+      "cost_per_success": null,
+      "wall_median_s": 30.09932541847229,
+      "wall_p90_s": 30.09932541847229,
+      "steps_median": 0,
+      "test_runs_median": 0,
+      "failures": {
+        "incorrect_patch": 1
+      },
+      "models": []
+    },
+    "noop": {
+      "attempts": 1,
+      "tasks": 1,
+      "successes": 0,
+      "tasks_solved_at_least_once": 0,
+      "success_rate": 0.0,
+      "ci95": [
+        0.0,
+        0.7934567085261071
+      ],
+      "attempts_collection_failed": 0,
+      "regressions_total": 0,
+      "attempts_with_regression": 0,
+      "tokens_median": 0,
+      "cost_median": 0,
+      "cost_mean": 0.0,
+      "cost_p90": 0.0,
+      "cost_total": 0,
+      "cost_per_success": null,
+      "wall_median_s": 0,
+      "wall_p90_s": 0.0,
+      "steps_median": 0,
+      "test_runs_median": 0,
+      "failures": {
+        "gave_up": 1
+      },
+      "models": []
+    }
+  },
+  "warnings": []
+}

@@ -116,10 +116,11 @@ class Env:
         overrides.write_text(f"pydantic=={self.pydantic_pin}\n")
         py = shlex.quote(t.python_version)
         pkgs = [f"pydantic=={self.pydantic_pin}", *self.extra_deps, *t.test_deps]
+        newer = f"--exclude-newer {q(t.exclude_newer)} " if t.exclude_newer else ""
         cmd = (
             f"uv venv --python {py} --seed {q(self.sb.work_root + '/venv')} >/dev/null && "
             f"uv pip install --python {q(self.sb.work_root + '/venv/bin/python')} "
-            f"--override {q(self.sb.work_root + '/overrides.txt')} "
+            f"--override {q(self.sb.work_root + '/overrides.txt')} {newer}"
             f"{' '.join(q(p) for p in pkgs)} {t.install_cmd}"
         )
         self.setup_result = self.sb.exec(cmd, cwd="repo", timeout=timeout, network=True)

@@ -1,0 +1,67 @@
+{
+  "base_sha": "e46cb7e7618d046475c5ddb1586710358f19dbd9",
+  "deselect": [],
+  "exclude_newer": "2025-02-27",
+  "exclusion_reason": null,
+  "extra_deps_after": [],
+  "extra_deps_before": [],
+  "id": "llm-pydantic-v2",
+  "install_cmd": "-e .[test]",
+  "notes": "simonw/llm 'Upgrade to Pydantic v2 (#775)'; reference changes source only, no test edits; deps resolved as of 2025-02-27",
+  "policy": "native_v2",
+  "policy_exceptions": [],
+  "provisional": false,
+  "pydantic_after": "2.10.0",
+  "pydantic_before": "1.10.21",
+  "python_version": "3.11",
+  "reference_sha": "849c65fe9d299cce735473ced6330302ad6b5591",
+  "repo_url": "https://github.com/simonw/llm",
+  "split": "dev",
+  "states": {
+    "reference_pass": {
+      "counts": {
+        "error": 0,
+        "failed": 0,
+        "passed": 280,
+        "skipped": 0
+      },
+      "dropped_count": 0,
+      "dropped_tests": [],
+      "duration_s": 12.0,
+      "green_on_required": true,
+      "native_clean": true,
+      "required": 280
+    },
+    "v1_pass": {
+      "counts": {
+        "error": 0,
+        "failed": 0,
+        "passed": 280,
+        "skipped": 0
+      },
+      "duration_s": 11.6,
+      "green": true,
+      "network_isolated": true,
+      "stable": true
+    },
+    "v2_fail": {
+      "collection_error": false,
+      "counts": {
+        "error": 0,
+        "failed": 0,
+        "passed": 280,
+        "skipped": 0
+      },
+      "failing_required_normal": 0,
+      "failing_required_strict": 280
+    }
+  },
+  "status": "reproducible",
+  "synthetic": false,
+  "test_adaptation_patch": null,
+  "test_cmd": "pytest -q tests",
+  "test_deps": [
+    "pytest"
+  ],
+  "test_timeout_s": 300
+}

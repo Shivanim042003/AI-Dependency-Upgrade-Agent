@@ -33,6 +33,7 @@ class TaskSpec:
     pydantic_after: str = "2.10.0"     # exact pin for the v2 environment
     extra_deps_before: list[str] = field(default_factory=list)
     extra_deps_after: list[str] = field(default_factory=list)   # e.g. pydantic-settings
+    exclude_newer: str = ""             # uv --exclude-newer cutoff (date): resolve deps as of the base commit
     install_cmd: str = "-e ."          # args passed to `uv pip install`
     test_deps: list[str] = field(default_factory=lambda: ["pytest"])
     test_cmd: str = "pytest -x -q"     # junit + warning flags are appended by the harness

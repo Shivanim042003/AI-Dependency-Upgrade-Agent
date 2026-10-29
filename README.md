@@ -153,16 +153,25 @@ docker/        runner image                                   scripts/probe_repo
 
 ## Current results
 
-**Status: development evidence, not a benchmark.** The harness is validated end to end. On a 12-test synthetic
-fixture the agent produced a verified migration (open-weights `gpt-oss-120b`). On two real repositories
-(`openjd-model`, 2,022 tests; `vonage-sdk`, 422 tests) neither `bump-pydantic` nor the agent has yet produced a
-verified migration.
+**Status: development evidence, not a benchmark.** The harness is validated end to end, including the Docker backend.
 
-- One attempt per cell; confidence intervals are wide and tasks are provisional (adaptations not yet human-reviewed).
-- Infrastructure errors (rate limits, exhausted credit) are excluded from success rates and reported separately.
-- The strongest model tried, `deepseek-v3.2`, showed correct migration reasoning (for example, spotting that the v2
-  regex engine rejects lookaheads) but hit the wall-clock budget on a slow provider.
-- Reproduce with `pmigrate report --model <name>`.
+**Headline track (strict-native): `llm-pydantic-v2`**, simonw/llm "Upgrade to Pydantic v2": 280 offline tests,
+deprecation warnings as errors, no test changes, dependencies resolved as of the base commit date.
+
+| Variant | Verified | Notes |
+|---|---|---|
+| noop | 0/1 | nothing fixed |
+| bump-pydantic | 0/1 | passes 279/280 under the strict check; leaves one deprecated `.schema()` call (`test_llm_models_options`) |
+| agent (`gemini-2.5-flash`) | 1/1 | 16 steps, 86 s; one attempt only |
+
+**Other tasks (provisional: adaptations not yet signed off):** on `openjd-model` and `vonage-sdk` the baseline verified
+0 of 3 runs on each, and the agent has not yet produced a verified migration (`gpt-oss-120b`: 0/1 on each;
+`deepseek-v3.2` reasoned correctly but hit the wall-clock limit).
+
+**Limits of these results:** one attempt per cell, so no confidence in any rate; repeats and the `agent` vs `agent+docs`
+comparison have not been run (free-tier quotas allow about one agent run per model per day); infrastructure errors
+(rate limits, quota, exhausted credit) are excluded from all rates and reported separately. Reproduce with
+`pmigrate report --model <name>`.
 
 ## Sandbox validation
 

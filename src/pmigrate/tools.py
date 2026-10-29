@@ -125,7 +125,17 @@ class ToolBox:
                         args[tgt] = args.pop(k)
                     else:
                         args.pop(k); ignored.append(k)
+            repeats = 0
+            if name in ("list_files", "read_file", "search", "lookup_migration_rule"):
+                key = (name, json.dumps(args, sort_keys=True, default=str), getattr(self, "_edits", 0))
+                seen = self.__dict__.setdefault("_seen", {})
+                seen[key] = repeats = seen.get(key, 0) + 1
             out = _clip(fn(**args))
+            if repeats >= 3:
+                out += (f"\n(note: you have made this exact call {repeats} times with no edit in between, so the result "
+                        "cannot change. Make an edit, run the tests, or call finish.)")
+            if repeats >= 6:
+                self.budget_hit = "stalled"      # looping on identical reads: end the attempt instead of burning the budget
             if ignored:
                 out += f"\n(note: ignored unknown argument(s): {', '.join(ignored)}; valid: {', '.join(sorted(params - {'self'}))})"
             return out, False

@@ -1,42 +1,42 @@
 {
   "summary": {
     "noop": {
-      "attempts": 7,
-      "tasks": 3,
+      "attempts": 8,
+      "tasks": 4,
       "successes": 0,
       "tasks_solved_at_least_once": 0,
       "success_rate": 0.0,
       "ci95": [
         0.0,
-        0.35433884297520657
+        0.3244156195108769
       ],
       "attempts_collection_failed": 0,
       "regressions_total": 0,
       "attempts_with_regression": 0,
-      "tokens_median": 0,
-      "cost_median": 0,
+      "tokens_median": 0.0,
+      "cost_median": 0.0,
       "cost_mean": 0.0,
       "cost_p90": 0.0,
       "cost_total": 0,
       "cost_per_success": null,
-      "wall_median_s": 0,
+      "wall_median_s": 0.0,
       "wall_p90_s": 0.0,
-      "steps_median": 0,
-      "test_runs_median": 0,
+      "steps_median": 0.0,
+      "test_runs_median": 0.0,
       "failures": {
-        "gave_up": 7
+        "gave_up": 8
       },
       "models": []
     },
     "bump-pydantic": {
-      "attempts": 7,
-      "tasks": 3,
+      "attempts": 9,
+      "tasks": 4,
       "successes": 0,
       "tasks_solved_at_least_once": 0,
       "success_rate": 0.0,
       "ci95": [
         0.0,
-        0.35433884297520657
+        0.2991527535509594
       ],
       "attempts_collection_failed": 5,
       "regressions_total": 0,
@@ -47,55 +47,77 @@
       "cost_p90": 0.0,
       "cost_total": 0,
       "cost_per_success": null,
-      "wall_median_s": 27.855889320373535,
-      "wall_p90_s": 75.4935079574585,
+      "wall_median_s": 28.811346769332886,
+      "wall_p90_s": 74.0886300086975,
       "steps_median": 0,
       "test_runs_median": 0,
       "failures": {
-        "incorrect_patch": 7
+        "incorrect_patch": 9
       },
       "models": []
     },
     "agent": {
-      "attempts": 8,
-      "tasks": 3,
+      "attempts": 4,
+      "tasks": 2,
       "successes": 1,
       "tasks_solved_at_least_once": 1,
-      "success_rate": 0.125,
+      "success_rate": 0.25,
       "ci95": [
-        0.02241690886329618,
-        0.4708948057698615
+        0.045586062644636216,
+        0.6993639475573634
       ],
-      "attempts_collection_failed": 4,
+      "attempts_collection_failed": 1,
       "regressions_total": 0,
       "attempts_with_regression": 0,
-      "tokens_median": 380865.5,
-      "cost_median": 0.0640047,
-      "cost_mean": 0.11222926,
-      "cost_p90": 0.309319421,
-      "cost_total": 0.89783408,
-      "cost_per_success": 0.89783408,
-      "wall_median_s": 475.17704153060913,
-      "wall_p90_s": 1226.327493691444,
-      "steps_median": 39.5,
-      "test_runs_median": 2.5,
+      "tokens_median": 111764.0,
+      "cost_median": 0.05923824200000001,
+      "cost_mean": 0.119741517,
+      "cost_p90": 0.23389784600000008,
+      "cost_total": 0.478966068,
+      "cost_per_success": 0.478966068,
+      "wall_median_s": 537.3726317882538,
+      "wall_p90_s": 1870.298198127747,
+      "steps_median": 40.0,
+      "test_runs_median": 2.0,
       "failures": {
-        "gave_up": 1,
-        "budget_exhausted": 5,
-        "incorrect_patch": 1
+        "budget_exhausted": 3
       },
       "models": [
-        "deepseek/deepseek-v3.2",
-        "llama3.1",
-        "openai/gpt-oss-120b",
-        "qwen2.5:14b"
+        "deepseek/deepseek-v3.2"
+      ]
+    },
+    "agent+docs": {
+      "attempts": 3,
+      "tasks": 1,
+      "successes": 3,
+      "tasks_solved_at_least_once": 1,
+      "success_rate": 1.0,
+      "ci95": [
+        0.4384939195509822,
+        1.0
+      ],
+      "attempts_collection_failed": 0,
+      "regressions_total": 0,
+      "attempts_with_regression": 0,
+      "tokens_median": 71166,
+      "cost_median": 0.0468685,
+      "cost_mean": 0.04957757466666667,
+      "cost_p90": 0.0535619784,
+      "cost_total": 0.148732724,
+      "cost_per_success": 0.04957757466666667,
+      "wall_median_s": 387.77272605895996,
+      "wall_p90_s": 451.0341703414917,
+      "steps_median": 40,
+      "test_runs_median": 3,
+      "failures": {},
+      "models": [
+        "deepseek/deepseek-v3.2"
       ]
     }
   },
   "warnings": [
-    "18 infrastructure-error runs (category `environment`) were excluded from all rates",
+    "6 infrastructure-error runs (category `environment`) were excluded from all rates",
     "multiple code versions contributed to these runs (agent code changed mid-experiment)",
-    "multiple models in one report",
-    "all runs used the local backend (not a security boundary; Docker path unvalidated)"
+    "results mix execution backends (docker, local); do not pool them"
   ]
 }

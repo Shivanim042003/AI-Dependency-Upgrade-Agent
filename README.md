@@ -227,3 +227,14 @@ pmigrate report --model deepseek
 ```
 
 Results are written to `results/runs.sqlite`. The tables above come from `results/report-deepseek-cmp2.md` (40 steps) and `results/report-deepseek-cmp3.md` (80 steps); do not quote the combined `agent` row in a report that mixes budgets. Model output is not deterministic, so counts will vary between runs.
+
+### Harder tasks (provisional): no verified agent pass
+
+`deepseek/deepseek-v3.2`, 1 attempt per variant, 80-step and 25-minute caps, Docker backend:
+
+| Task | agent | agent+docs |
+|---|---|---|
+| openjd-model | fail (80 steps, step cap) | fail (80 steps, step cap) |
+| vonage-sdk | fail (76 steps, time cap) | fail (28 steps, time cap) |
+
+These tasks are larger than `llm-pydantic-v2` and are still marked provisional (adaptation audits not yet human-reviewed). One attempt per cell under one budget does not show the agent cannot solve them; it shows it did not within these caps. Full report: `results/report-deepseek-harder.md`.

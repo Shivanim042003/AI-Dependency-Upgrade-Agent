@@ -58,3 +58,39 @@ def test_search_and_list(ws):
     assert "src/a.py:1:" in ws.search(r"validator")
     assert "(no matches)" == ws.search("zzzz")
     assert "src/a.py" in ws.list_files()
+
+
+def test_edit_tolerates_whitespace_differences(tmp_path):
+    repo = tmp_path / "repo"
+    (repo / "src").mkdir(parents=True)
+    (repo / "src" / "m.py").write_text("class A:\n    x = 1   \n    y = 2\n")
+    w = Workspace(repo, init_fresh_repo(repo))
+    # agent supplies different indentation and drops trailing spaces
+    out = w.edit_file("src/m.py", "  x = 1\n  y = 2", "  x = 10\n  y = 20")
+    assert "ignoring whitespace" in out
+    assert (repo / "src" / "m.py").read_text() == "class A:\n    x = 10\n    y = 20\n"
+
+
+def test_edit_whitespace_tolerance_refuses_ambiguity_and_content_changes(tmp_path):
+    repo = tmp_path / "repo"
+    (repo / "src").mkdir(parents=True)
+    (repo / "src" / "m.py").write_text("def f():\n    x = 1\ndef g():\n    x = 1\n")
+    w = Workspace(repo, init_fresh_repo(repo))
+    with pytest.raises(WorkspaceError, match="matches 2 places ignoring whitespace"):
+        w.edit_file("src/m.py", "        x = 1", "        x = 2")
+    with pytest.raises(WorkspaceError, match="not found"):
+        w.edit_file("src/m.py", "    x = 99", "    x = 2")      # different content is never matched
+
+
+def test_ambiguous_edit_reports_line_numbers(ws):
+    with pytest.raises(WorkspaceError, match=r"lines 2, 3"):
+        ws.edit_file("src/a.py", "x = 1", "x = 2")
+
+
+def test_edit_whitespace_tolerance_skips_tab_indented_files(tmp_path):
+    repo = tmp_path / "repo"
+    (repo / "src").mkdir(parents=True)
+    (repo / "src" / "m.py").write_text("class A:\n\tx = 1\n")
+    w = Workspace(repo, init_fresh_repo(repo))
+    with pytest.raises(WorkspaceError, match="not found"):
+        w.edit_file("src/m.py", "    x = 1", "    x = 2")

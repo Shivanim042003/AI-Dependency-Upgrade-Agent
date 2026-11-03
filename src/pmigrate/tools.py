@@ -142,7 +142,10 @@ class ToolBox:
         except WorkspaceError as e:
             return str(e), True
         except TypeError as e:
-            return f"bad arguments for {name}: {e}", True
+            hint = ""
+            if "missing" in str(e) and name in ("write_file", "edit_file"):
+                hint = " (the call may have been cut off by the output-token limit; use a smaller edit_file instead of a large write_file)"
+            return f"bad arguments for {name}: {e}{hint}", True
         except Exception as e:  # tool bugs must not crash the attempt
             return f"tool error: {type(e).__name__}: {e}", True
 

@@ -40,6 +40,73 @@ def _closest(text: str, old: str) -> str:
     return f"\nClosest line in the file (line {best + 1}): {lines[best]!r}"
 
 
+def _indent(s: str) -> int:
+    return len(s) - len(s.lstrip())
+
+
+def _fuzzy_matches(text: str, old: str) -> list:
+    """Line-aligned matches of `old` in `text` that differ only in trailing whitespace and a constant
+    indentation shift. Returns [(first_line_index, n_lines, indent_delta)]. Windows whose file lines are
+    tab-indented are skipped (re-indenting them would risk mixed indentation)."""
+    t = text.split("\n")
+    o = old.strip("\n").split("\n")
+    if not any(l.strip() for l in o):
+        return []
+    out = []
+    for i in range(len(t) - len(o) + 1):
+        delta, ok = None, True
+        for raw, b in zip(t[i:i + len(o)], o):
+            if "\t" in raw[:_indent(raw)]:
+                ok = False
+                break
+            a, b = raw.expandtabs(4).rstrip(), b.expandtabs(4).rstrip()
+            if not a.strip() or not b.strip():
+                if a.strip() or b.strip():
+                    ok = False
+                    break
+                continue
+            if a.lstrip() != b.lstrip():
+                ok = False
+                break
+            d = _indent(a) - _indent(b)
+            if delta is None:
+                delta = d
+            elif d != delta:
+                ok = False
+                break
+        if ok and delta is not None:
+            out.append((i, len(o), delta))
+    return out
+
+
+def _reindent(lines: list, delta: int):
+    """Shift non-blank lines by `delta` spaces; None if that is not safely possible."""
+    res = []
+    for l in lines:
+        if not l.strip() or delta == 0:
+            res.append(l)
+        elif delta > 0:
+            if l.startswith("\t"):
+                return None
+            res.append(" " * delta + l)
+        else:
+            if not l.startswith(" " * -delta):
+                return None
+            res.append(l[-delta:])
+    return res
+
+
+def _match_lines(text: str, old: str, limit: int = 6) -> list:
+    pos, s = [], 0
+    while len(pos) < limit:
+        j = text.find(old, s)
+        if j < 0:
+            break
+        pos.append(text.count("\n", 0, j) + 1)
+        s = j + 1
+    return pos
+
+
 class WorkspaceError(Exception):
     pass
 
@@ -238,9 +305,23 @@ class Workspace:
             if text.count(old2) == 1:
                 old, new, cnt = old2, new2, 1
         if cnt == 0:
+            fm = _fuzzy_matches(text, old)
+            if len(fm) == 1:
+                i, n, delta = fm[0]
+                newl = _reindent(new.strip("\n").split("\n"), delta)
+                if newl is not None:
+                    lines = text.split("\n")
+                    lines[i:i + n] = newl
+                    p.write_text("\n".join(lines), encoding="utf-8")
+                    return f"edited {path} (matched lines {i + 1}-{i + n} ignoring whitespace differences)"
+            if len(fm) > 1:
+                at = ", ".join(str(i + 1) for i, _, _ in fm[:6])
+                raise WorkspaceError(f"`old` text matches {len(fm)} places ignoring whitespace (starting at lines {at}); "
+                                     "include more context to make it unique.")
             raise WorkspaceError("`old` text not found. Re-read the file; whitespace must match exactly." + _closest(text, old))
         if cnt > 1:
-            raise WorkspaceError(f"`old` text matches {cnt} places; include more context to make it unique.")
+            at = ", ".join(str(n) for n in _match_lines(text, old))
+            raise WorkspaceError(f"`old` text matches {cnt} places (starting at lines {at}); include more context to make it unique.")
         p.write_text(text.replace(old, new, 1), encoding="utf-8")
         return f"edited {path}"
 

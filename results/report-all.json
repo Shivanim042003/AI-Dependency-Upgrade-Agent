@@ -1,34 +1,6 @@
 {
   "summary": {
     "noop": {
-      "attempts": 8,
-      "tasks": 4,
-      "successes": 0,
-      "tasks_solved_at_least_once": 0,
-      "success_rate": 0.0,
-      "ci95": [
-        0.0,
-        0.3244156195108769
-      ],
-      "attempts_collection_failed": 0,
-      "regressions_total": 0,
-      "attempts_with_regression": 0,
-      "tokens_median": 0.0,
-      "cost_median": 0.0,
-      "cost_mean": 0.0,
-      "cost_p90": 0.0,
-      "cost_total": 0,
-      "cost_per_success": null,
-      "wall_median_s": 0.0,
-      "wall_p90_s": 0.0,
-      "steps_median": 0.0,
-      "test_runs_median": 0.0,
-      "failures": {
-        "gave_up": 8
-      },
-      "models": []
-    },
-    "bump-pydantic": {
       "attempts": 9,
       "tasks": 4,
       "successes": 0,
@@ -38,7 +10,7 @@
         0.0,
         0.2991527535509594
       ],
-      "attempts_collection_failed": 5,
+      "attempts_collection_failed": 0,
       "regressions_total": 0,
       "attempts_with_regression": 0,
       "tokens_median": 0,
@@ -47,76 +19,106 @@
       "cost_p90": 0.0,
       "cost_total": 0,
       "cost_per_success": null,
-      "wall_median_s": 28.811346769332886,
-      "wall_p90_s": 74.0886300086975,
+      "wall_median_s": 0,
+      "wall_p90_s": 0.0,
       "steps_median": 0,
       "test_runs_median": 0,
       "failures": {
-        "incorrect_patch": 9
+        "gave_up": 9
+      },
+      "models": []
+    },
+    "bump-pydantic": {
+      "attempts": 10,
+      "tasks": 4,
+      "successes": 0,
+      "tasks_solved_at_least_once": 0,
+      "success_rate": 0.0,
+      "ci95": [
+        0.0,
+        0.2775401687666165
+      ],
+      "attempts_collection_failed": 5,
+      "regressions_total": 0,
+      "attempts_with_regression": 0,
+      "tokens_median": 0.0,
+      "cost_median": 0.0,
+      "cost_mean": 0.0,
+      "cost_p90": 0.0,
+      "cost_total": 0,
+      "cost_per_success": null,
+      "wall_median_s": 28.9809627532959,
+      "wall_p90_s": 73.38619103431701,
+      "steps_median": 0.0,
+      "test_runs_median": 0.0,
+      "failures": {
+        "incorrect_patch": 10
       },
       "models": []
     },
     "agent": {
-      "attempts": 4,
-      "tasks": 2,
-      "successes": 1,
+      "attempts": 9,
+      "tasks": 3,
+      "successes": 3,
       "tasks_solved_at_least_once": 1,
-      "success_rate": 0.25,
+      "success_rate": 0.3333333333333333,
       "ci95": [
-        0.045586062644636216,
-        0.6993639475573634
+        0.12058159868274292,
+        0.6458026525009103
       ],
-      "attempts_collection_failed": 1,
-      "regressions_total": 0,
-      "attempts_with_regression": 0,
-      "tokens_median": 111764.0,
-      "cost_median": 0.05923824200000001,
-      "cost_mean": 0.119741517,
-      "cost_p90": 0.23389784600000008,
-      "cost_total": 0.478966068,
-      "cost_per_success": 0.478966068,
-      "wall_median_s": 537.3726317882538,
-      "wall_p90_s": 1870.298198127747,
-      "steps_median": 40.0,
-      "test_runs_median": 2.0,
+      "attempts_collection_failed": 2,
+      "regressions_total": 1,
+      "attempts_with_regression": 1,
+      "tokens_median": 218650,
+      "cost_median": 0.09488973200000002,
+      "cost_mean": 0.1112576017777778,
+      "cost_p90": 0.17026802800000007,
+      "cost_total": 1.0013184160000002,
+      "cost_per_success": 0.33377280533333337,
+      "wall_median_s": 598.1293454170227,
+      "wall_p90_s": 1695.9412195682528,
+      "steps_median": 76,
+      "test_runs_median": 2,
       "failures": {
-        "budget_exhausted": 3
+        "budget_exhausted": 6
       },
       "models": [
         "deepseek/deepseek-v3.2"
       ]
     },
     "agent+docs": {
-      "attempts": 3,
-      "tasks": 1,
+      "attempts": 5,
+      "tasks": 3,
       "successes": 3,
       "tasks_solved_at_least_once": 1,
-      "success_rate": 1.0,
+      "success_rate": 0.6,
       "ci95": [
-        0.4384939195509822,
-        1.0
+        0.23071993220883702,
+        0.8823817688407467
       ],
-      "attempts_collection_failed": 0,
+      "attempts_collection_failed": 1,
       "regressions_total": 0,
       "attempts_with_regression": 0,
-      "tokens_median": 71166,
-      "cost_median": 0.0468685,
-      "cost_mean": 0.04957757466666667,
-      "cost_p90": 0.0535619784,
-      "cost_total": 0.148732724,
-      "cost_per_success": 0.04957757466666667,
-      "wall_median_s": 387.77272605895996,
-      "wall_p90_s": 451.0341703414917,
+      "tokens_median": 86096,
+      "cost_median": 0.055235348000000004,
+      "cost_mean": 0.06833388800000001,
+      "cost_p90": 0.09977110640000002,
+      "cost_total": 0.34166944000000005,
+      "cost_per_success": 0.11388981333333335,
+      "wall_median_s": 466.84953141212463,
+      "wall_p90_s": 1090.2282797813416,
       "steps_median": 40,
       "test_runs_median": 3,
-      "failures": {},
+      "failures": {
+        "budget_exhausted": 2
+      },
       "models": [
         "deepseek/deepseek-v3.2"
       ]
     }
   },
   "warnings": [
-    "6 infrastructure-error runs (category `environment`) were excluded from all rates",
+    "8 infrastructure-error runs (category `environment`) were excluded from all rates",
     "multiple code versions contributed to these runs (agent code changed mid-experiment)",
     "results mix execution backends (docker, local); do not pool them"
   ]

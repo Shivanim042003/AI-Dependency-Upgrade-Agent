@@ -12,17 +12,25 @@ Eligible tasks in these runs: **3** | excluded during preparation: **0** (of 4 c
 |---|---|---|---|---|---|---|---|---|---|
 | bump-pydantic | 0/3 (0%) | 0%-56% | 0 attempts (0 tests) | 2/3 | $0.000 | 0 | - | 73s | 0 |
 | noop | 0/3 (0%) | 0%-56% | 0 attempts (0 tests) | 0/3 | $0.000 | 0 | - | 0s | 0 |
+| agent | 0/1 (0%) | 0%-79% | 0 attempts (0 tests) | 0/1 | $0.095 | 231,313 | - | 341s | 80 |
+| agent+docs | 0/1 (0%) | 0%-79% | 0 attempts (0 tests) | 1/1 | $0.113 | 287,802 | - | 471s | 80 |
 
 | Variant | environment | incorrect_patch | regression | budget_exhausted | policy_violation | gave_up |
 |---|---|---|---|---|---|---|
 | bump-pydantic | 0 | 3 | 0 | 0 | 0 | 0 |
 | noop | 0 | 0 | 0 | 0 | 0 | 3 |
+| agent | 0 | 0 | 0 | 1 | 0 | 0 |
+| agent+docs | 0 | 0 | 0 | 1 | 0 | 0 |
 
 Paired per-task comparison:
 
 | A | B | tasks | A only | B only | both | neither | exact p |
 |---|---|---|---|---|---|---|---|
 | bump-pydantic | noop | 1 | 0 | 0 | 0 | 1 | 1.000 |
+| agent | bump-pydantic | 1 | 0 | 0 | 0 | 1 | 1.000 |
+| agent+docs | bump-pydantic | 1 | 0 | 0 | 0 | 1 | 1.000 |
+
+Infrastructure errors excluded from the rates above (not agent results): agent+docs: 1
 
 ## Track: lenient (1 task: vonage-sdk)
 
@@ -32,13 +40,15 @@ Paired per-task comparison:
 |---|---|---|---|---|---|---|---|---|---|
 | bump-pydantic | 0/3 (0%) | 0%-56% | 0 attempts (0 tests) | 2/3 | $0.000 | 0 | - | 22s | 0 |
 | noop | 0/3 (0%) | 0%-56% | 0 attempts (0 tests) | 0/3 | $0.000 | 0 | - | 0s | 0 |
-| agent | 0/1 (0%) | 0%-79% | 0 attempts (0 tests) | 1/1 | $0.308 | 1,025,767 | - | 2401s | 39 |
+| agent | 0/2 (0%) | 0%-66% | 0 attempts (0 tests) | 2/2 | $0.222 | 666,076 | - | 1960s | 58 |
+| agent+docs | 0/1 (0%) | 0%-79% | 0 attempts (0 tests) | 0/1 | $0.080 | 197,363 | - | 1503s | 28 |
 
 | Variant | environment | incorrect_patch | regression | budget_exhausted | policy_violation | gave_up |
 |---|---|---|---|---|---|---|
 | bump-pydantic | 0 | 3 | 0 | 0 | 0 | 0 |
 | noop | 0 | 0 | 0 | 0 | 0 | 3 |
-| agent | 0 | 0 | 0 | 1 | 0 | 0 |
+| agent | 0 | 0 | 0 | 2 | 0 | 0 |
+| agent+docs | 0 | 0 | 0 | 1 | 0 | 0 |
 
 Paired per-task comparison:
 
@@ -46,6 +56,9 @@ Paired per-task comparison:
 |---|---|---|---|---|---|---|---|
 | bump-pydantic | noop | 1 | 0 | 0 | 0 | 1 | 1.000 |
 | agent | bump-pydantic | 1 | 0 | 0 | 0 | 1 | 1.000 |
+| agent+docs | bump-pydantic | 1 | 0 | 0 | 0 | 1 | 1.000 |
+
+Infrastructure errors excluded from the rates above (not agent results): agent: 1
 
 ## Track: strict_native (1 task: llm-pydantic-v2)
 
@@ -53,16 +66,16 @@ Paired per-task comparison:
 
 | Variant | Verified | 95% CI | Regressions | Collection failed | Median cost | Median tokens | $/success | Median time | Median steps |
 |---|---|---|---|---|---|---|---|---|---|
-| bump-pydantic | 0/2 (0%) | 0%-66% | 0 attempts (0 tests) | 0/2 | $0.000 | 0 | - | 29s | 0 |
-| noop | 0/1 (0%) | 0%-79% | 0 attempts (0 tests) | 0/1 | $0.000 | 0 | - | 0s | 0 |
-| agent | 1/3 (33%) | 6%-79% | 0 attempts (0 tests) | 0/3 | $0.058 | 102,566 | $0.171 | 442s | 40 |
+| bump-pydantic | 0/3 (0%) | 0%-56% | 0 attempts (0 tests) | 0/3 | $0.000 | 0 | - | 29s | 0 |
+| noop | 0/2 (0%) | 0%-66% | 0 attempts (0 tests) | 0/2 | $0.000 | 0 | - | 0s | 0 |
+| agent | 3/6 (50%) | 19%-81% | 1 attempts (1 tests) | 0/6 | $0.069 | 114,878 | $0.154 | 527s | 60 |
 | agent+docs | 3/3 (100%) | 44%-100% | 0 attempts (0 tests) | 0/3 | $0.047 | 71,166 | $0.050 | 388s | 40 |
 
 | Variant | environment | incorrect_patch | regression | budget_exhausted | policy_violation | gave_up |
 |---|---|---|---|---|---|---|
-| bump-pydantic | 0 | 2 | 0 | 0 | 0 | 0 |
-| noop | 0 | 0 | 0 | 0 | 0 | 1 |
-| agent | 0 | 0 | 0 | 2 | 0 | 0 |
+| bump-pydantic | 0 | 3 | 0 | 0 | 0 | 0 |
+| noop | 0 | 0 | 0 | 0 | 0 | 2 |
+| agent | 0 | 0 | 0 | 3 | 0 | 0 |
 | agent+docs | 0 | 0 | 0 | 0 | 0 | 0 |
 
 Paired per-task comparison:
@@ -99,6 +112,6 @@ Paired per-task comparison:
 
 
 ## Warnings
-- 6 infrastructure-error runs (category `environment`) were excluded from all rates
+- 8 infrastructure-error runs (category `environment`) were excluded from all rates
 - multiple code versions contributed to these runs (agent code changed mid-experiment)
 - results mix execution backends (docker, local); do not pool them

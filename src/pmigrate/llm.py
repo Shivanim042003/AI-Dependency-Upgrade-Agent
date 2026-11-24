@@ -159,6 +159,8 @@ class OpenAICompatClient:
             except Exception as e:
                 raise RuntimeError(f"cannot reach {self.base_url} within 8s ({e}); check URL, firewall, and that the server is running")
             self._probed = True
+        if not model:
+            raise RuntimeError("no model set: pass --model or set PMIGRATE_MODEL (a model id that supports tool calling)")
         body = {"model": model, "messages": messages_to_openai(system, messages), "max_tokens": max_tokens}
         ot = tools_to_openai(tools)
         if ot:

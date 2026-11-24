@@ -1,7 +1,7 @@
 """Allowlisted demo API. Only preconfigured tasks run; nothing user-supplied is ever executed.
 
 Modes (env PMIGRATE_DEMO_MODE or `pmigrate serve --mode`):
-  live    real model calls (needs ANTHROPIC_API_KEY), real sandboxed verification
+  live    real model calls (needs a configured model provider; see docs/PROVIDERS.md), real sandboxed verification
   replay  replays a recorded/scripted agent transcript (no API key, no spend), real verification
 
 Safety controls: task + variant allowlist, one run at a time, per-IP hourly limit, per-run

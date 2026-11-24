@@ -45,7 +45,7 @@ def test_response_parsing_and_bad_arguments():
 
 
 def test_llm_configured_env(monkeypatch):
-    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("PMIGRATE_PROVIDER", raising=False)
     assert not llm_configured()
     monkeypatch.setenv("PMIGRATE_PROVIDER", "openai")
@@ -100,3 +100,11 @@ def test_agent_loop_over_http(tmp_path, task):
     roles = [m["role"] for m in Mock.seen[1]["messages"]]
     assert roles == ["system", "user", "assistant", "tool"]
     assert Mock.seen[0]["tools"][0]["type"] == "function"
+
+
+def test_make_llm_rejects_unsupported_provider(monkeypatch):
+    from pmigrate.llm import make_llm
+    monkeypatch.setenv("PMIGRATE_PROVIDER", "other")
+    with pytest.raises(RuntimeError, match="unsupported"):
+        make_llm()
+    assert not llm_configured()

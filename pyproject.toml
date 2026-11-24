@@ -8,7 +8,6 @@ version = "0.1.0"
 description = "Evaluated AI agent for Pydantic v1 -> v2 migrations, with a bump-pydantic baseline"
 requires-python = ">=3.11"
 dependencies = [
-  "anthropic>=0.40",
   "fastapi>=0.110",
   "uvicorn>=0.29",
   "pytest>=8",

@@ -165,3 +165,15 @@ def test_system_prompt_reflects_policy(task):
     assert "deprecation warnings treated as errors" in build_system(task, AgentConfig())
     task.policy = "lenient"
     assert "deprecation warnings treated as errors" not in build_system(task, AgentConfig())
+
+
+import pytest as _pytest
+
+
+@_pytest.fixture(autouse=True)
+def _priced_default_model(monkeypatch):
+    """Tests build AgentConfig() with no model; give that model a price so cost accounting is exercised."""
+    import pmigrate.config as _c
+    real = _c.load_pricing()
+    entry = next(v for k, v in real.items() if not k.startswith("_"))
+    monkeypatch.setattr(_c, "load_pricing", lambda: {**real, "": entry})

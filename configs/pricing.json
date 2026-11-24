@@ -1,10 +1,6 @@
 {
-  "_comment": "USD per 1M tokens. PLACEHOLDER VALUES - verify against https://docs.claude.com before reporting dollar costs.",
+  "_comment": "USD per 1M tokens. PLACEHOLDER VALUES - verify against your provider's current pricing page before reporting dollar costs.",
   "default": {
-    "input": 3.0,
-    "output": 15.0
-  },
-  "claude-sonnet-5-5": {
     "input": 3.0,
     "output": 15.0
   },

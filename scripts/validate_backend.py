@@ -35,7 +35,6 @@ def check(name, ok, detail="", isolation=False):
     print(f"{'PASS' if ok else 'FAIL'}  {name}  {detail}")
 
 
-os.environ["ANTHROPIC_API_KEY"] = "canary-secret-anthropic"
 os.environ["PMIGRATE_API_KEY"] = "canary-secret-compat"
 os.environ["OPENAI_API_KEY"] = "canary-secret-openai"
 runs = CACHE_DIR / "runs"

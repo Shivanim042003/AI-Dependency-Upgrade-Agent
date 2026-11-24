@@ -8,3 +8,4 @@ tasks/toy-users*.json
 .venv/
 *.pyc
 .env
+results/failed_agent_calls.txt

@@ -1,4 +1,4 @@
-# Running without an Anthropic API key
+# Model providers (OpenAI-compatible endpoints)
 
 The agent talks to any OpenAI-compatible `/chat/completions` endpoint with tool calling.
 

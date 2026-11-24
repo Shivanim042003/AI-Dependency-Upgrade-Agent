@@ -38,7 +38,7 @@ class Budget:
 
 @dataclass
 class AgentConfig:
-    model: str = os.environ.get("PMIGRATE_MODEL", "claude-sonnet-5-5")
+    model: str = os.environ.get("PMIGRATE_MODEL", "")
     use_docs: bool = False
     use_planning: bool = False
     revert_on_worse: bool = False
@@ -60,7 +60,7 @@ class AgentConfig:
 def load_pricing() -> dict:
     """USD per million tokens, keyed by model id.
 
-    NOTE: verify these against the current Anthropic pricing page before you report
+    NOTE: verify these against your provider's current pricing page before you report
     any dollar figure. Token counts are always logged so cost can be recomputed.
     """
     if PRICING_PATH.exists():

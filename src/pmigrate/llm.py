@@ -1,4 +1,4 @@
-"""Thin LLM layer: one real client (Anthropic Messages API) and one scripted client.
+"""Thin LLM layer: one real client (OpenAI-compatible chat completions) and one scripted client.
 
 Responses are normalised to plain dicts so a run's transcript can be stored in SQLite/JSON and
 replayed later by `ScriptedClient` (used by tests and by the offline demo mode).
@@ -57,45 +57,6 @@ class LLMClient(Protocol):
                  max_tokens: int, temperature: Optional[float]) -> LLMResponse: ...
 
 
-class AnthropicClient:
-    def __init__(self, api_key: Optional[str] = None):
-        import anthropic
-        key = api_key or os.environ.get("ANTHROPIC_API_KEY")
-        if not key:
-            raise RuntimeError("ANTHROPIC_API_KEY is not set")
-        self._anthropic = anthropic
-        self.client = anthropic.Anthropic(api_key=key, max_retries=4, timeout=180)
-
-    def complete(self, *, model, system, messages, tools, max_tokens, temperature=None) -> LLMResponse:
-        # Prompt caching: stable prefix (system + tools) and the growing conversation tail.
-        msgs = copy.deepcopy(messages)
-        if msgs:
-            last = msgs[-1]["content"]
-            if isinstance(last, list) and last:
-                last[-1]["cache_control"] = {"type": "ephemeral"}
-        kwargs = dict(model=model, max_tokens=max_tokens, messages=msgs,
-                      system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}])
-        if tools:
-            kwargs["tools"] = tools
-        if temperature is not None:
-            kwargs["temperature"] = temperature
-        resp = self.client.messages.create(**kwargs)
-        blocks = []
-        for b in resp.content:
-            if b.type == "text":
-                blocks.append({"type": "text", "text": b.text})
-            elif b.type == "tool_use":
-                blocks.append({"type": "tool_use", "id": b.id, "name": b.name, "input": b.input})
-        u = resp.usage
-        usage = Usage(
-            input_tokens=getattr(u, "input_tokens", 0) or 0,
-            output_tokens=getattr(u, "output_tokens", 0) or 0,
-            cache_read_tokens=getattr(u, "cache_read_input_tokens", 0) or 0,
-            cache_write_tokens=getattr(u, "cache_creation_input_tokens", 0) or 0,
-        )
-        return LLMResponse(blocks, resp.stop_reason or "end_turn", usage)
-
-
 # ---------------------------------------------------------------------------------------------
 # OpenAI-compatible chat-completions client (OpenRouter, Groq, Gemini's OpenAI endpoint, Ollama,
 # vLLM, LM Studio, OpenAI...). No SDK dependency: plain HTTPS + JSON.
@@ -108,7 +69,7 @@ def tools_to_openai(tools: Optional[list]) -> Optional[list]:
 
 
 def messages_to_openai(system: str, messages: list) -> list:
-    """Translate our Anthropic-style block messages into OpenAI chat messages."""
+    """Translate our internal block messages (text / tool_use / tool_result) into OpenAI chat messages."""
     out = [{"role": "system", "content": system}]
     for m in messages:
         blocks = m["content"] if isinstance(m["content"], list) else [{"type": "text", "text": m["content"]}]
@@ -230,20 +191,24 @@ class OpenAICompatClient:
         raise RuntimeError(f"LLM request failed after retries: {last}")
 
 
+_COMPAT_NAMES = ("", "openai", "openai-compat", "compat")
+
+
 def make_llm():
-    """Provider from env: PMIGRATE_PROVIDER=anthropic (default) | openai (any OpenAI-compatible endpoint)."""
-    prov = os.environ.get("PMIGRATE_PROVIDER", "anthropic").lower()
-    if prov in ("openai", "openai-compat", "compat"):
-        return OpenAICompatClient()
-    return AnthropicClient()
+    """OpenAI-compatible chat-completions endpoint (OpenRouter, Groq, Gemini's OpenAI endpoint, Ollama, vLLM, ...).
+    Configure with PMIGRATE_BASE_URL, PMIGRATE_API_KEY and PMIGRATE_MODEL; PMIGRATE_PROVIDER may be unset or `openai`."""
+    prov = os.environ.get("PMIGRATE_PROVIDER", "").lower()
+    if prov not in _COMPAT_NAMES:
+        raise RuntimeError(f"unsupported PMIGRATE_PROVIDER={prov!r}: only OpenAI-compatible endpoints are supported "
+                           "(use PMIGRATE_PROVIDER=openai with PMIGRATE_BASE_URL)")
+    return OpenAICompatClient()
 
 
 def llm_configured() -> bool:
-    prov = os.environ.get("PMIGRATE_PROVIDER", "anthropic").lower()
-    if prov in ("openai", "openai-compat", "compat"):
-        base = os.environ.get("PMIGRATE_BASE_URL", "")
-        return bool(os.environ.get("PMIGRATE_API_KEY") or os.environ.get("OPENAI_API_KEY") or "localhost" in base or "127.0.0.1" in base)
-    return bool(os.environ.get("ANTHROPIC_API_KEY"))
+    if os.environ.get("PMIGRATE_PROVIDER", "").lower() not in _COMPAT_NAMES:
+        return False
+    base = os.environ.get("PMIGRATE_BASE_URL", "")
+    return bool(os.environ.get("PMIGRATE_API_KEY") or os.environ.get("OPENAI_API_KEY") or "localhost" in base or "127.0.0.1" in base)
 
 
 class ScriptedClient:

@@ -29,7 +29,7 @@ def cmd_check_env(a):
         ("docker daemon", docker_available(), "recommended backend for untrusted repos (PMIGRATE_BACKEND=docker)"),
         ("local net isolation (unshare -n)", can_unshare_net(), "only matters for the local backend"),
         ("LLM provider configured", llm_configured(),
-         "agent variants need one: ANTHROPIC_API_KEY, or PMIGRATE_PROVIDER=openai + PMIGRATE_BASE_URL (+ key)"),
+         "agent variants need one: PMIGRATE_PROVIDER=openai + PMIGRATE_BASE_URL (+ PMIGRATE_API_KEY; local Ollama needs no key)"),
     ]
     for name, ok, note in rows:
         print(f"{'OK ' if ok else 'NO '} {name:34s} {note}")

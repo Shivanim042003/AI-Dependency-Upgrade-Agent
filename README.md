@@ -16,7 +16,7 @@ Pydantic's own deterministic codemod, `bump-pydantic`.
 > | agent loop, docs retrieval, planning, revert | control flow validated with **scripted** transcripts and a mock HTTP provider. **Never run against a live model.** Live behaviour (malformed tool calls, retries, usage accounting, budget stops) is unvalidated |
 > | Docker backend | implemented, **never executed** (no daemon where this was built). `scripts/validate_backend.py` is the acceptance test to run first |
 > | pricing | `configs/pricing.json` is a **placeholder**; no dollar figure here is verified |
-> | LLM providers | Anthropic or any OpenAI-compatible endpoint (see `docs/NO_ANTHROPIC_KEY.md`) |
+> | LLM providers | Any OpenAI-compatible endpoint (see `docs/PROVIDERS.md`) |
 > | demo (FastAPI + UI) | verified end to end in `replay` mode only |
 >
 > **Claims this supports today:** a Pydantic migration-agent framework with clean-room verification, policy enforcement,
@@ -88,7 +88,7 @@ pmigrate prepare-task --id my-task --repo <url> --base <sha> --ref <sha> \
     --test-cmd "pytest -q tests" --test-deps pytest --backend docker
 pmigrate fetch-docs --tag v2.10.0                          # pinned migration guide + changelog
 
-# evaluation: pick a provider (no Anthropic key needed)
+# evaluation: pick a provider
 #   export PMIGRATE_PROVIDER=openai PMIGRATE_BASE_URL=<endpoint>/v1 PMIGRATE_API_KEY=<key>   # or none for local Ollama
 #   export PMIGRATE_MODEL=<model id that supports tool/function calling>
 pmigrate eval dev-1 --split dev --dry-run                  # job count and worst-case spend first
@@ -120,8 +120,7 @@ Agent rows (`agent`, `agent+docs`, `agent+docs+plan`): **not run yet**; target h
 > *Built a Pydantic v1→v2 migration agent and evaluated it on N tasks. It achieved X/N verified migrations vs Y/N
 > for bump-pydantic, at a median $Z model cost per attempt (API only, failed attempts included).*
 
-Fill X/Y/Z only from `pmigrate report`. With a free or local model cost is $0, so report **tokens per attempt** instead (logged, shown in the report) and name the model; use `--max-total-tokens` as the budget. `configs/pricing.json` holds **placeholder** rates: check them against
-current Anthropic pricing before quoting dollars.
+Fill X/Y/Z only from `pmigrate report`. With a free or local model cost is $0, so report **tokens per attempt** instead (logged, shown in the report) and name the model; use `--max-total-tokens` as the budget. `configs/pricing.json` holds **placeholder** rates: check them against your provider's current pricing before quoting dollars.
 
 ## Known limitations
 

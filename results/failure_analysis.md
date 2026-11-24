@@ -8,9 +8,15 @@
 | llm-pydantic-v2 | agent | cmp3 | budget_exhausted | 80 | 598 | 101 | 42 | 44 | 13 | 1 | 42 | 1 | 0 | 0 | 10 |
 | llm-pydantic-v2 | agent | cmp3 | PASS | 79 | 456 | 83 | 31 | 30 | 10 | 10 | 16 | 0 | 0 | 5 | 2 |
 | llm-pydantic-v2 | agent | cmp3 | PASS | 79 | 602 | 92 | 28 | 42 | 14 | 4 | 13 | 0 | 0 | 0 | 2 |
+| llm-pydantic-v2 | agent | cmp8 | budget_exhausted | 40 | 267 | 40 | 16 | 10 | 11 | 2 | 15 | 1 | 0 | 1 | 3 |
+| llm-pydantic-v2 | agent | cmp8 | PASS | 40 | 238 | 40 | 13 | 16 | 6 | 4 | 13 | 0 | 0 | 1 | 0 |
+| llm-pydantic-v2 | agent | cmp8 | PASS | 40 | 240 | 40 | 13 | 12 | 10 | 4 | 16 | 0 | 0 | 1 | 2 |
 | llm-pydantic-v2 | agent+docs | cmp2 | PASS | 39 | 387 | 55 | 22 | 19 | 8 | 3 | 34 | 0 | 0 | 0 | 2 |
 | llm-pydantic-v2 | agent+docs | cmp2 | PASS | 40 | 466 | 63 | 23 | 25 | 8 | 5 | 34 | 0 | 0 | 1 | 1 |
 | llm-pydantic-v2 | agent+docs | cmp2 | PASS | 40 | 246 | 40 | 16 | 12 | 8 | 3 | 23 | 0 | 0 | 0 | 0 |
+| llm-pydantic-v2 | agent+docs | cmp8 | PASS | 40 | 246 | 40 | 13 | 13 | 6 | 4 | 16 | 0 | 1 | 1 | 0 |
+| llm-pydantic-v2 | agent+docs | cmp8 | budget_exhausted | 40 | 227 | 40 | 12 | 8 | 12 | 3 | 15 | 0 | 0 | 1 | 5 |
+| llm-pydantic-v2 | agent+docs | cmp8 | PASS | 40 | 211 | 40 | 11 | 11 | 7 | 6 | 13 | 0 | 0 | 3 | 0 |
 | openjd-model | agent | cmp4 | budget_exhausted | 80 | 340 | 103 | 41 | 32 | 23 | 3 | 52 | 0 | 0 | 2 | 14 |
 | openjd-model | agent+docs | cmp5 | budget_exhausted | 80 | 471 | 93 | 38 | 31 | 16 | 2 | 44 | 0 | 2 | 1 | 5 |
 | vonage-sdk | agent | cmp6 | budget_exhausted | 76 | 1519 | 104 | 40 | 24 | 25 | 3 | 46 | 3 | 0 | 0 | 14 |

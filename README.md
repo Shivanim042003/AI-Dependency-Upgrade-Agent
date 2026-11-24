@@ -237,3 +237,18 @@ Results are written to `results/runs.sqlite`. The tables above come from `result
 | vonage-sdk | fail (76 steps, time cap) | fail (28 steps, time cap) |
 
 These tasks are larger than `llm-pydantic-v2` and are still marked provisional (adaptation audits not yet human-reviewed). One attempt per cell under one budget does not show the agent cannot solve them; it shows it did not within these caps. Full report: `results/report-deepseek-harder.md`.
+
+## Trace analysis of failed runs
+
+`python scripts/analyze_failures.py [experiments...]` reads `results/runs.sqlite` and writes `results/failure_analysis.md`: for each run, the number of tool calls by type, the index of the first edit, repeated identical reads and searches, test runs with no edit in between, and errored calls. On the larger tasks, failed runs had many errored calls, most often `edit_file` not finding its old text or matching twice (for example 11 of 23 edits in one `openjd-model` run). The causes are not established.
+
+## Edit-tool change and rerun (cmp8)
+
+`edit_file` now accepts a unique whitespace-tolerant match when the exact text is not found, lists line numbers when the text matches more than once, and hints that a large `write_file` call may have been cut off by the output-token limit. After the change, `agent` and `agent+docs` were rerun on `llm-pydantic-v2` (same model, 3 attempts per variant, 40 steps, Docker backend):
+
+| Variant | Verified | 95% CI (Wilson) |
+|---|---|---|
+| `agent` | 2 of 3 | 21% to 94% |
+| `agent+docs` | 2 of 3 | 21% to 94% |
+
+The earlier 1-of-3 versus 3-of-3 difference (cmp2) did not repeat, and with 3 attempts per cell neither batch is conclusive. The two batches ran different code, so they are not pooled, and the edit change's effect is not established. All six rerun attempts used the full 40 steps and none called `finish`; each pass means the diff at step 40 was already correct. Report: `results/report-deepseek-cmp8.md`.
